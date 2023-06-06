@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>152892079602-flhars08cds5js1cqoudtc75d4nlg146.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.152892079602-flhars08cds5js1cqoudtc75d4nlg146</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBD2SCO-gXBfgaV0w3ynfcmPYz8HvAnuxg</string>
+	<key>GCM_SENDER_ID</key>
+	<string>152892079602</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.ukma.edu.ua.levchenko.ProTasker</string>
+	<key>PROJECT_ID</key>
+	<string>protasker-df9a5</string>
+	<key>STORAGE_BUCKET</key>
+	<string>protasker-df9a5.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:152892079602:ios:8487f99ac2a37c505fff6b</string>
+</dict>
+</plist>
