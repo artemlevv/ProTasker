@@ -14,6 +14,7 @@ import Combine
 
 struct MyProfileScreen: View {
     @EnvironmentObject var firestoreManager: FirestoreManager
+    @ObservedObject var projectManager: ProjectManager
     
     @State private var userItem: PhotosPickerItem?
     @State private var userImage: Image? = Image("default_project")
@@ -26,111 +27,132 @@ struct MyProfileScreen: View {
     
     @State private var showChangeUserDataAlert = false
     @State private var successUpdate = false
+    @State private var isDownloading = false
     @State private var errorUserDataChange = ""
     
     
     
     
     var body: some View {
-        NavigationStack{
-            VStack{
-                //Image("default_user")
-                userImage?
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: 150, height: 150)
-                    .clipShape(Circle())
-                    .overlay(Circle().stroke(Color.white, lineWidth: 2))
-                    .shadow(radius: 4)
-                    .padding(20)
-                
-                PhotosPicker("Select avatar", selection: $userItem, matching: .images)
-                
-                HStack{
-                    Text("Name")
-                        .font(.system(size: 18))
-                        .bold()
-                    Spacer()
-                }
-                .padding(.leading, 20)
-                
-                TextField("Enter username", text: $userName)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .padding()
-                
-                HStack{
-                    Text("Email")
-                        .font(.system(size: 18))
-                        .bold()
-                    Spacer()
-                }
-                .padding(.leading, 20)
-                
-                TextField("Enter email", text: $userEmail)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .padding()
-                
-                HStack{
-                    Text("Phone")
-                        .font(.system(size: 18))
-                        .bold()
-                    Spacer()
-                }
-                .padding(.leading, 20)
-                
-                TextField("Enter phone", text: $userPhone)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .padding()
-                
-                
-                Button(action: {
-                    // updateUserInfo()
-                    updateUser(userName: self.userName, userEmail: self.userEmail, userPhone: self.userPhone)
-                }) {
-                    Text("Update")
-                        .foregroundColor(.white)
-                        .font(.title2)
-                        .bold()
+        ZStack{
+            NavigationStack{
+                VStack{
+                    //Image("default_user")
+                    userImage?
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 150, height: 150)
+                        .clipShape(Circle())
+                        .overlay(Circle().stroke(Color.white, lineWidth: 2))
+                        .shadow(radius: 4)
+                        .padding(20)
+                    
+                    PhotosPicker("Select avatar", selection: $userItem, matching: .images)
+                    
+                    HStack{
+                        Text("Name")
+                            .font(.system(size: 18))
+                            .bold()
+                        Spacer()
+                    }
+                    .padding(.leading, 20)
+                    
+                    TextField("Enter username", text: $userName)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
                         .padding()
-                        .padding(.leading, 20)
-                        .padding(.trailing, 20)
-                        .background(Color.blue)
-                        .cornerRadius(10)
+                    
+                    HStack{
+                        Text("Email")
+                            .font(.system(size: 18))
+                            .bold()
+                        Spacer()
+                    }
+                    .padding(.leading, 20)
+                    
+                    TextField("Enter email", text: $userEmail)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .padding()
+                        .disabled(true)
+                    
+                    HStack{
+                        Text("Phone")
+                            .font(.system(size: 18))
+                            .bold()
+                        Spacer()
+                    }
+                    .padding(.leading, 20)
+                    
+                    TextField("Enter phone", text: $userPhone)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .padding()
+                    
+                    
+                    Button(action: {
+                        // updateUserInfo()
+                        self.isDownloading = true
+                        updateUser(userName: self.userName, userEmail: self.userEmail, userPhone: self.userPhone)
+                    }) {
+                        Text("Update")
+                            .foregroundColor(.white)
+                            .font(.title2)
+                            .bold()
+                            .padding()
+                            .padding(.leading, 20)
+                            .padding(.trailing, 20)
+                            .background(Color.blue)
+                            .cornerRadius(10)
+                    }
+                    .padding()
+                    .alert(isPresented: $showChangeUserDataAlert){
+                        Alert(
+                            title: Text("Error"),
+                            message: Text(errorUserDataChange),
+                            dismissButton: .default(Text("Ok"))
+                        )
+                    }
+                    .alert(isPresented: $successUpdate){
+                        Alert(
+                            title: Text("Succes Update"),
+                            message: Text("Your data has been successfully updated"),
+                            dismissButton: .default(Text("Ok"))
+                        )
+                    }
+                    
+                    
+                    
+                    Spacer()
+                }
+                .padding(.top, 18)
+                .toolbar {
+                    ToolbarItem(placement: .principal) {
+                        Text("My Profile")
+                            .font(.system(size: 26))
+                            .bold()
+                            .foregroundColor(.white)
+                    }
+                }
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbarBackground(.blue, for: .navigationBar)
+                .toolbarBackground(.visible, for: .navigationBar)
+                .navigationBarBackButtonHidden(true)
+                .navigationBarItems(leading: CustomBackButton())
+            }
+            if isDownloading {
+                // Add a blur effect to the background
+                Color.black.opacity(0.5)
+                    .edgesIgnoringSafeArea(.all)
+                    .blur(radius: 10)
+                
+                // Center the downloading view
+                VStack {
+                    Spacer()
+                    
+                    DownloadView()
+                    
+                    Spacer()
                 }
                 .padding()
-                .alert(isPresented: $showChangeUserDataAlert){
-                    Alert(
-                        title: Text("Error"),
-                        message: Text(errorUserDataChange),
-                        dismissButton: .default(Text("Ok"))
-                    )
-                }
-                .alert(isPresented: $successUpdate){
-                    Alert(
-                        title: Text("Succes Update"),
-                        message: Text("Your data has been successfully updated"),
-                        dismissButton: .default(Text("Ok"))
-                    )
-                }
-                
-                
-                
-                Spacer()
             }
-            .padding(.top, 18)
-            .toolbar {
-                        ToolbarItem(placement: .principal) {
-                            Text("My Profile")
-                                .font(.system(size: 26))
-                                .bold()
-                                .foregroundColor(.white)
-                        }
-            }
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.blue, for: .navigationBar)
-            .toolbarBackground(.visible, for: .navigationBar)
-            .navigationBarBackButtonHidden(true)
-            .navigationBarItems(leading: CustomBackButton())
         }
         .onAppear(){
             self.firestoreManager.getUserdata()
@@ -179,7 +201,14 @@ struct MyProfileScreen: View {
                             print("Error updating document: \(error)")
                         } else {
                             print("Document successfully updated!")
+                            self.isDownloading = false
                             self.successUpdate.toggle()
+                            for index in 0..<projectManager.projectList.count {
+                                if projectManager.projectList[index].asignedTo[0] == userUid{
+                                    projectManager.projectList[index].createdBy = userName
+                                    projectManager.updateProject(project: projectManager.projectList[index])
+                                }
+                            }
                         }
                     }
                 } else {
@@ -242,67 +271,6 @@ struct MyProfileScreen: View {
                .assign(to: \.userImage, on: self)
     }
 }
-
-struct MyProfileScreen_Previews: PreviewProvider {
-    static var previews: some View {
-        MyProfileScreen()
-    }
-}
-
-
-
-
-/*
- *** Simple function for updating user info ***
-
- .onAppear {
-             configureFirebase()
-             fetchUserInfo()
-         }
- 
- func fetchUserInfo() {
-       let db = Firestore.firestore()
-       let userRef = db.collection("users").document("userID")
-
-       userRef.getDocument { document, error in
-           if let document = document, document.exists {
-               let data = document.data()
-               if let name = data?["name"] as? String {
-                   userName = name
-               }
-               if let email = data?["email"] as? String {
-                   userEmail = email
-               }
-               if let phone = data?["phone"] as? String {
-                   userPhone = phone
-               }
-           }
-       }
-   }
-
-   func updateUserInfo() {
-       let db = Firestore.firestore()
-       let userRef = db.collection("users").document("userID")
-
-       userRef.updateData([
-           "name": userName,
-           "email": userEmail,
-           "phone": userPhone
-       ]) { error in
-           if let error = error {
-               print("Error updating user information: \(error.localizedDescription)")
-           } else {
-               print("User information updated successfully!")
-           }
-       }
-   }
- 
- 
- 
- 
- 
- 
- */
 extension View {
 // This function changes our View to UIView, then calls another function
 // to convert the newly-made UIView to a UIImage.

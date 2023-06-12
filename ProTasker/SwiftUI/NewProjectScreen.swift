@@ -14,6 +14,7 @@ import FirebaseStorage
 struct NewProjectScreen: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.dismiss) var dismissWhileCreating
+    
     @EnvironmentObject var projectManager: ProjectManager
     @EnvironmentObject var firestoreManger: FirestoreManager
     
@@ -23,78 +24,98 @@ struct NewProjectScreen: View {
     @State private var projectName: String = ""
     
     @State private var showEmptyCreating = false
+    @State private var isDownloading = false
     
     var body: some View {
-        NavigationStack{
-            VStack{
-                projectImage
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: 200, height: 200)
-                    .clipShape(Circle())
-                    .overlay(Circle().stroke(Color.white, lineWidth: 2))
-                    .shadow(radius: 8)
-                
-                PhotosPicker("Select avatar", selection: $projectItem, matching: .images)
-                
-                TextField("Project name",
-                          text: $projectName)
-                .textFieldStyle(.roundedBorder)
-                .font(.custom("Apple SD Gothic Neo", size: 21))
-                .border(.teal)
-                .padding(10)
-                
-                Button(action: {
-                    if !projectName.isEmpty{
-                        uploadMedia(userIm:projectImage.asUIImage()) { url in
-                            if let checked_url = url {
-                                projectManager.addProject(image_url: checked_url, nameProject: projectName, user_name: firestoreManger.username)
+        ZStack{
+            NavigationStack{
+                VStack{
+                    projectImage
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 200, height: 200)
+                        .clipShape(Circle())
+                        .overlay(Circle().stroke(Color.white, lineWidth: 2))
+                        .shadow(radius: 8)
+                    
+                    PhotosPicker("Select avatar", selection: $projectItem, matching: .images)
+                    TextField("Project name",
+                              text: $projectName)
+                    //.textFieldStyle(.roundedBorder)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .font(.custom("Apple SD Gothic Neo", size: 21))
+                    .padding(10)
+                    
+                    Button(action: {
+                        if !projectName.isEmpty{
+                            self.isDownloading = true
+                            uploadMedia(userIm:projectImage.asUIImage()) { url in
+                                if let checked_url = url {
+                                    projectManager.addProject(image_url: checked_url, nameProject: projectName, user_name: firestoreManger.username)
+                                    self.isDownloading = false
                                     dismissWhileCreating()
+                                }
                             }
                         }
-                    }
-                    else{
-                        self.showEmptyCreating.toggle()
-                    }
-                }, label: {
-                    Text("Create project")
-                        .font(.custom("Apple SD Gothic Neo", size: 20))
-                        .bold()
-                        .padding(10)
-                })
-                .buttonStyle(.borderedProminent)
-                .padding(.leading, 10)
-                .padding(.trailing, 10)
-                .alert(isPresented: $showEmptyCreating){
-                    Alert(
-                        title: Text("Empty Name"),
-                        message: Text("Please fill the name of project"),
-                        dismissButton: .default(Text("Ok"))
-                    )
-                }
-            }
-            .onChange(of: projectItem) { _ in
-                Task {
-                    if let data = try? await projectItem?.loadTransferable(type: Data.self) {
-                        if let uiImage = UIImage(data: data) {
-                            projectImage = Image(uiImage: uiImage)
-                            return
+                        else{
+                            self.showEmptyCreating.toggle()
                         }
+                    }, label: {
+                        Text("Create project")
+                            .font(.custom("Apple SD Gothic Neo", size: 20))
+                            .bold()
+                            .padding(10)
+                    })
+                    .buttonStyle(.borderedProminent)
+                    .padding(.leading, 10)
+                    .padding(.trailing, 10)
+                    .alert(isPresented: $showEmptyCreating){
+                        Alert(
+                            title: Text("Empty Name"),
+                            message: Text("Please fill the name of project"),
+                            dismissButton: .default(Text("Ok"))
+                        )
                     }
-                    
-                    print("Failed")
+                }
+                .onChange(of: projectItem) { _ in
+                    Task {
+                        if let data = try? await projectItem?.loadTransferable(type: Data.self) {
+                            if let uiImage = UIImage(data: data) {
+                                projectImage = Image(uiImage: uiImage)
+                                return
+                            }
+                        }
+                        
+                        print("Failed")
+                    }
+                }
+                .toolbar{
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button(action: {
+                            dismiss()
+                        }, label: {
+                            Image(systemName: "multiply")
+                                .font(.system(size: 25))
+                                .foregroundColor(.black)
+                        })
+                    }
                 }
             }
-            .toolbar{
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button(action: {
-                        dismiss()
-                    }, label: {
-                        Image(systemName: "multiply")
-                            .font(.system(size: 25))
-                            .foregroundColor(.black)
-                    })
+            if isDownloading {
+                // Add a blur effect to the background
+                Color.black.opacity(0.5)
+                    .edgesIgnoringSafeArea(.all)
+                    .blur(radius: 10)
+                
+                // Center the downloading view
+                VStack {
+                    Spacer()
+                    
+                    DownloadView()
+                    
+                    Spacer()
                 }
+                .padding()
             }
         }
         
@@ -102,7 +123,6 @@ struct NewProjectScreen: View {
     
     func uploadMedia(userIm: UIImage,completion: @escaping (_ url: String?) -> Void) {
         let storage = Storage.storage()
-        guard let userUid = Auth.auth().currentUser?.uid else {return}
         let storageRef = storage.reference().child("User\(currentTimeInMilliSeconds()).jpg")
         
         // Convert the image into JPEG and compress the quality to reduce its size

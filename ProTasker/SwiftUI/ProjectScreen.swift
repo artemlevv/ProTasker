@@ -11,33 +11,38 @@ import Firebase
 struct ProjectScreen: View {
     @ObservedObject var projectManager: ProjectManager
     @EnvironmentObject var firestoreManger: FirestoreManager
+    @Environment(\.dismiss) var dismiss
+    
 
     @State var proj_index: Int
     @State var addingList = false
+    @State var showdeleteProjectAlert = false
     @State var listNameAdded = ""
     let screenWidth = UIScreen.main.bounds.size.width
+    
+    @State var taskList: [TaskT] = []
     
     //MARK: - Bool
     @State var emptyAddedTask = false
     
-    //MARK: - Timer for updating firebase
-    @State var currentDate = Date()
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-    
+
     
     var body: some View {
-        VStack{
-            ScrollView(.horizontal, showsIndicators: false){
-                LazyHStack{
-                    ForEach(projectManager.projectList[proj_index].taskList.indices, id: \.self) { list_index in
-                        TaskListView(projectManager: projectManager, taskIndex: list_index, proj_index: proj_index)
-                            .frame(width: screenWidth * 0.8)
-                            .environmentObject(firestoreManger)
+        NavigationStack{
+            VStack{
+                ScrollView(.horizontal, showsIndicators: false){
+                    LazyHStack{
+                        ForEach(self.taskList.indices, id: \.self) { list_index in
+                            TaskList(taskIndex: list_index, proj_index: proj_index, taskList: $taskList, projectManager: projectManager)
+                                    .environmentObject(firestoreManger)
+                                    .frame(width: screenWidth * 0.8)
+                            
+                        }
+                        addingListProcess()
+                            .padding(.top, 15)
+                            .padding(.leading, 20)
+                            .padding(.trailing, 20)
                     }
-                    addingListProcess()
-                        .padding(.top, 15)
-                        .padding(.leading, 20)
-                        .padding(.trailing, 20)
                 }
             }
         }
@@ -59,6 +64,11 @@ struct ProjectScreen: View {
                                         .environmentObject(firestoreManger)
                             }
                             .buttonStyle(.plain)
+                            Button(role: .destructive, action: {
+                                showdeleteProjectAlert.toggle()
+                            }, label: {
+                                Text("Delete project")
+                            })
                     
                     } label: {
                         Image(systemName: "ellipsis.circle")
@@ -67,15 +77,27 @@ struct ProjectScreen: View {
                     }
                 }
         }
-        .onReceive(timer) { input in
-            self.projectManager.getProjectdata()
-        }
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.blue, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
         .navigationBarBackButtonHidden(true)
         .navigationBarItems(leading: CustomBackButton())
-        
+        .alert(isPresented: $showdeleteProjectAlert) {
+                Alert(
+                    title: Text("Delete Project"),
+                    message: Text("Are you sure to delete this project?"),
+                    primaryButton: .default(Text("Yes")) {
+                        dismiss()
+                        projectManager.deleteProject(project: projectManager.projectList[proj_index])
+                        projectManager.getProjectdata()
+                },
+                    secondaryButton: .cancel(Text("No")) {}
+                )
+            }
+        .onAppear(){
+            self.projectManager.getProjectdata()
+            self.taskList = self.projectManager.projectList[proj_index].taskList
+        }
     }
     
     @ViewBuilder
@@ -89,7 +111,7 @@ struct ProjectScreen: View {
                         Spacer()
                         HStack{
                             Image(systemName: "plus")
-                            Text("Add card")
+                            Text("Add list")
                                 .padding(.top, 15)
                                 .padding(.bottom, 15)
                         }
@@ -116,7 +138,9 @@ struct ProjectScreen: View {
                             self.projectManager.projectList[proj_index].taskList.append(TaskT(cards: [], createdBy: userUid, title: listNameAdded))
                             self.projectManager.updateProject(project: projectManager.projectList[self.proj_index])
                             self.projectManager.getProjectdata()
+                            self.taskList = self.projectManager.projectList[proj_index].taskList
                             addingList = false
+                            listNameAdded = ""
                         }
                         else{
                             emptyAddedTask.toggle()
@@ -138,13 +162,6 @@ struct ProjectScreen: View {
             }
             Spacer()
         }
-    }
-}
-
-struct ProjectScreen_Previews: PreviewProvider {
-    static var previews: some View {
-        var test = Project(id: "", asignedTo: ["hh"], createdBy: "name", image: "im", name: "Project", taskList: [])
-        ProjectScreen(projectManager: ProjectManager(), proj_index: 0)
     }
 }
 

@@ -10,19 +10,29 @@ import SwiftUI
 struct CardDetailScreen: View {
     @ObservedObject var projectManager: ProjectManager
     @EnvironmentObject var firestoreManger: FirestoreManager
+    @Environment(\.colorScheme) var colorScheme
+    @Environment(\.dismiss) var dismiss
+    
+    @State var showDeleteAlert: Bool = false
+    
     @State var proj_index: Int
     @State var taskIndex: Int
     @State var cardIndex: Int
+    @Binding var cards: [Card]
+    @Binding var deleteCard: Bool
     
     @State var cardName: String = ""
+    @State var dataSet: Bool = false
     
     @State private var selectedColor = Color.white
+    @State private var cardDate: Date = Date()
+    @State var cur_card: Card = Card(assignedTo: [], color: "", createdBy: "", name: "", date: 0)
 
     let colors: [Color] = [.white, .green, .blue, .red]
     
     //MARK: - Timer for updating firebase
     @State var currentDate = Date()
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    @State var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     @State var showListUsers = false
     
@@ -61,8 +71,8 @@ struct CardDetailScreen: View {
                 HStack{
                         ScrollView(.horizontal){
                             LazyHStack{
-                                ForEach(projectManager.projectList[proj_index].taskList[taskIndex].cards[cardIndex].assignedTo, id: \.self) { user_id in
-                                    var us =  firestoreManger.userList.filter({$0.id == user_id})
+                                ForEach(cur_card.assignedTo, id: \.self) { user_id in
+                                    let us =  firestoreManger.userList.filter({$0.id == user_id})
                                     AsyncImage(url: URL(string: us[0].image)){ image in
                                         image.image?
                                             .resizable()
@@ -122,6 +132,10 @@ struct CardDetailScreen: View {
                 .frame(height: 70)
                 .padding(.leading, 20)
             }
+            VStack{
+                datePicker()
+            }
+            
             HStack{
                 Button(action: {
                     if !cardName.isEmpty{
@@ -129,6 +143,10 @@ struct CardDetailScreen: View {
                         let ch_color = selectedColor.toHex() as? String ?? ""
                         print(ch_color)
                         self.projectManager.projectList[proj_index].taskList[taskIndex].cards[cardIndex].color = ch_color
+                        if self.dataSet{
+                            let doubleDate = cardDate.timeIntervalSince1970
+                            self.projectManager.projectList[proj_index].taskList[taskIndex].cards[cardIndex].date = doubleDate
+                        }
                         self.projectManager.updateProject(project: projectManager.projectList[proj_index])
                         successUpdate.toggle()
                     }
@@ -174,10 +192,21 @@ struct CardDetailScreen: View {
         .onAppear(){
             self.cardName = self.projectManager.projectList[proj_index].taskList[taskIndex].cards[cardIndex].name
             self.selectedColor = Color.init(hex: self.projectManager.projectList[proj_index].taskList[taskIndex].cards[cardIndex].color) ?? Color.white
+            let unixTime = self.projectManager.projectList[proj_index].taskList[taskIndex].cards[cardIndex].date
+            if unixTime == 0{
+                self.cardDate = Date()
+            }
+            else{
+                self.cardDate =  Date(timeIntervalSince1970: TimeInterval(unixTime))
+                self.dataSet = true
+            }
+            self.cur_card = self.projectManager.projectList[proj_index].taskList[taskIndex].cards[cardIndex]
         }
         .onReceive(timer) { input in
             self.projectManager.updateProject(project: projectManager.projectList[proj_index])
+            self.projectManager.getProjectdata()
             firestoreManger.getAllUsersdata()
+            self.cur_card = self.projectManager.projectList[proj_index].taskList[taskIndex].cards[cardIndex]
         }
         .sheet(isPresented: $showListUsers){
             VStack{
@@ -187,7 +216,7 @@ struct CardDetailScreen: View {
                     .bold()
             List {
                 ForEach(projectManager.projectList[proj_index].asignedTo, id: \.self) { user_id in
-                    var us =  firestoreManger.userList.filter({$0.id == user_id})
+                    let us =  firestoreManger.userList.filter({$0.id == user_id})
                     MultipleSelectionRow(user: us[0], isSelected:
                                             self.projectManager.projectList[proj_index].taskList[taskIndex].cards[cardIndex].assignedTo.contains(user_id)){
                         if self.projectManager.projectList[proj_index].taskList[taskIndex].cards[cardIndex].assignedTo.contains(user_id) {
@@ -205,12 +234,83 @@ struct CardDetailScreen: View {
                 Spacer()
                     }
             }
+        .toolbar{
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: {
+                    showDeleteAlert.toggle()
+                    self.timer.upstream.connect().cancel()
+                }, label: {
+                    Image(systemName:"trash")
+                        .imageScale(.large)
+                        .foregroundColor(.white)
+                })
+            }
+            ToolbarItem(placement: .principal) {
+                
+                Text("Card Details")
+                    .font(.custom("Apple SD Gothic Neo", size: 21))
+                    .bold()
+                    .foregroundColor(.white)
+            }
+        }
+        .alert(isPresented: $showDeleteAlert) {
+                Alert(
+                    title: Text("Delete Card"),
+                    message: Text("Are you sure to delete this card?"),
+                    primaryButton: .default(Text("Yes")) {
+                            deleteCard = true
+                            cards.remove(at: self.cardIndex)
+                            dismiss()
+                            self.projectManager.deleteCard(project: projectManager.projectList[proj_index], taskIndex: taskIndex, cardIndex: cardIndex)
+                            self.projectManager.getProjectdata()
+                },
+                    secondaryButton: .cancel(Text("No")) {
+                        self.timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+                    }
+                )
+            }
     }
-}
-
-struct CardDetailScreen_Previews: PreviewProvider {
-    static var previews: some View {
-        CardDetailScreen(projectManager: ProjectManager(), proj_index: 0, taskIndex: 0, cardIndex: 0)
+    @ViewBuilder
+    func datePicker() -> some View{
+        if dataSet{
+            HStack{
+                DatePicker(selection: self.$cardDate, displayedComponents: [.date]){
+                    Text("Due to")
+                        .font(.custom("Apple SD Gothic Neo", size: 18))
+                        .bold()
+                        .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                }
+                .environment(\.locale, Locale.init(identifier: "en"))
+                Button(action: {
+                    dataSet.toggle()
+                }, label: {
+                    Image(systemName: "xmark.circle.fill").frame(width: 20, height: 20, alignment: .center)
+                        
+                })
+                .buttonStyle(PlainButtonStyle())
+            }
+            .padding(.vertical, 1)
+            .padding(.leading, 20)
+            .padding(.trailing, 20)
+        } else{
+            Button(action: {
+                dataSet.toggle()
+            }, label: {
+                HStack{
+                    Text("Due to")
+                        .font(.custom("Apple SD Gothic Neo", size: 18))
+                        .bold()
+                        .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                    Spacer()
+                    Text("<tap to set>")
+                        .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                }
+                .padding(.vertical, 7)
+                .padding(.leading, 20)
+                .padding(.trailing, 20)
+                
+            })
+        }
     }
 }
 

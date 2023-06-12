@@ -39,7 +39,6 @@ class FirestoreManager: ObservableObject{
         }
     }
     func getAllUsersdata(){
-            guard let userUid = Auth.auth().currentUser?.uid else {return}
             
             db.collection("users").addSnapshotListener { (querySnapshot, error) in
                 guard let documents = querySnapshot?.documents else {

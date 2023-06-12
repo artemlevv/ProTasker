@@ -50,8 +50,9 @@ class ProjectManager: ObservableObject{
                                 let createdBy = cardData["createdBy"] as? String ?? ""
                                 let name = cardData["name"] as? String ?? ""
                                 let color = cardData["color"] as? String ?? ""
+                                let date = cardData["dueTo"] as? Double ?? 0
                                 
-                                return Card(assignedTo: assignedTo,color: color, createdBy: createdBy, name: name)
+                                return Card(assignedTo: assignedTo, color: color, createdBy: createdBy, name: name, date: date)
                             }
                             
                             return TaskT(cards: cards, createdBy: createdBy, title: title)
@@ -82,7 +83,8 @@ class ProjectManager: ObservableObject{
                                 "assignedTo": card.assignedTo,
                                 "color": card.color,
                                 "createdBy": card.createdBy,
-                                "name": card.name
+                                "name": card.name,
+                                "dueTo": card.date
                             ]
                         },
                         "createdBy": task.createdBy,
@@ -114,7 +116,8 @@ class ProjectManager: ObservableObject{
                                 "assignedTo": card.assignedTo,
                                 "color": card.color,
                                 "createdBy": card.createdBy,
-                                "name": card.name
+                                "name": card.name,
+                                "dueTo": card.date
                             ]
                         },
                         "createdBy": task.createdBy,
@@ -123,18 +126,30 @@ class ProjectManager: ObservableObject{
                 }
             ]
             
-        db.collection("projects").document(project.id).updateData(projectData){ error in//setData(projectData) { error in
+        db.collection("projects").document(project.id).updateData(projectData){ error in
                 if let error = error {
                     print("Error updating project: \(error.localizedDescription)")
                 } else {
                     print("Project updated successfully")
                 }
             }
-        /*db.collection("projects").document(project.id).addSnapshotListener{ (querySnapshot, error) in
-            querySnapshot?.data().set
+    }
+    func deleteProject(project: Project){
+        db.collection("projects").document(project.id).delete() { err in
+            if let err = err {
+                print("Error removing document: \(err)")
+            } else {
+                print("Document successfully removed!")
+            }
             
-        }*/
         }
+    }
+    func deleteCard(project: Project, taskIndex: Int, cardIndex: Int){
+        var delproj = project
+        delproj.taskList[taskIndex].cards.remove(at: cardIndex)
+        print(delproj)
+        self.updateProject(project: delproj)
+    }
 }
 
 
@@ -149,14 +164,33 @@ struct Project: Hashable{
 }
 
 struct TaskT: Hashable{
+    var uuid: String
     var cards: [Card]
     var createdBy: String
     var title: String
+    
+    init(cards: [Card], createdBy: String, title: String) {
+        self.uuid = NSUUID().uuidString
+        self.cards = cards
+        self.createdBy = createdBy
+        self.title = title
+    }
 }
 
 struct Card: Hashable {
+    var uuid: String
     var assignedTo: [String]
     var color: String
     var createdBy: String
     var name: String
+    var date: Double
+    
+    init(assignedTo: [String], color: String, createdBy: String, name: String, date: Double) {
+        self.uuid = NSUUID().uuidString
+        self.assignedTo = assignedTo
+        self.color = color
+        self.createdBy = createdBy
+        self.name = name
+        self.date = date
+    }
 }

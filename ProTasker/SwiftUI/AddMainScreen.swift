@@ -13,6 +13,7 @@ struct AddMainScreen: View {
     @State var showProfileScreen = false
     
     @EnvironmentObject var firestoreManager: FirestoreManager
+    @ObservedObject var projectManager: ProjectManager
     
     
     var body: some View {
@@ -24,9 +25,6 @@ struct AddMainScreen: View {
                             .resizable()
                             .scaledToFill()
                     }
-                    //Image("default_user")
-                        //.resizable()
-                        //.aspectRatio(contentMode: .fill)
                         .frame(width: 100, height: 100)
                         .clipShape(Circle())
                         .overlay(Circle().stroke(Color.white, lineWidth: 2))
@@ -38,15 +36,15 @@ struct AddMainScreen: View {
                 .padding(.bottom, 30)
                 .background(.blue)
                 HStack{
-                    NavigationLink(destination: MyProfileScreen(), label: {
+                    NavigationLink(destination: MyProfileScreen(projectManager: projectManager).environmentObject(firestoreManager), label: {
                         HStack{
                             Image(systemName: "person.fill")
                                 .font(.system(size: 35))
                                 .foregroundColor(.blue)
                             Text("My profile")
                                 .font(.custom("Apple SD Gothic Neo", size: 25))
-                                .padding(.top, 12)
-                                .padding(.leading, 8)
+                                .padding(.top, 15)
+                                .padding(.leading, 14)
                                 .foregroundColor(.blue)
                         }
                     })
@@ -54,6 +52,23 @@ struct AddMainScreen: View {
                 }
                 .padding(.leading, 50)
                 .padding(.top, 20)
+                HStack{
+                    NavigationLink(destination: MyCardsScreen(projectManager: projectManager).environmentObject(firestoreManager)
+                        , label: {
+                        HStack{
+                            Image(systemName: "menucard.fill")
+                                .font(.system(size: 35))
+                                .foregroundColor(.blue)
+                            Text("My cards")
+                                .font(.custom("Apple SD Gothic Neo", size: 25))
+                                .padding(.top, 12)
+                                .padding(.leading, 17)
+                                .foregroundColor(.blue)
+                        }
+                    })
+                    Spacer()
+                }
+                .padding(.leading, 50)
                 HStack{
                     Button(action: {
                         withAnimation{
@@ -93,7 +108,7 @@ struct AddMainScreen: View {
 struct AddMainScreen_Previews: PreviewProvider {
     
     static var previews: some View {
-        AddMainScreen()
+        AddMainScreen(projectManager: ProjectManager())
     }
 }
 

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Firebase
 
 struct PeopleAddingView: View {
     @ObservedObject var projectManager: ProjectManager
@@ -16,14 +17,19 @@ struct PeopleAddingView: View {
     @State var errorAddingUser = false
     @State var userEmail: String = ""
     
+    let userUid = Auth.auth().currentUser?.uid ?? ""
+    
     var body: some View {
         VStack{
             ScrollView {
                 LazyVStack {
-                    ForEach(projectManager.projectList[proj_index].asignedTo, id: \.self) { id_user in
-                        let us = firestoreManger.userList.filter({$0.id == id_user})
-                        peopleRow(imageUrl: us[0].image, personName: us[0].name, personEmail: us[0].email)
-                        
+                    if projectManager.projectList.count > proj_index{
+                        ForEach(projectManager.projectList[proj_index].asignedTo, id: \.self) { id_user in
+                            let us = firestoreManger.userList.filter({$0.id == id_user})
+                            peopleRow(id_user: id_user, imageUrl: us[0].image, personName: us[0].name, personEmail: us[0].email)
+
+                            
+                        }
                     }
                 }
             }
@@ -71,7 +77,7 @@ struct PeopleAddingView: View {
                 }
     }
     @ViewBuilder
-    func peopleRow(imageUrl: String, personName: String, personEmail: String) -> some View{
+    func peopleRow(id_user: String, imageUrl: String, personName: String, personEmail: String) -> some View{
         HStack{
             AsyncImage(url: URL(string: imageUrl)){ image in
                 image.image?
@@ -98,6 +104,15 @@ struct PeopleAddingView: View {
                 }
             }
             Spacer()
+            if id_user != userUid{
+                Button(action: {
+                    projectManager.projectList[proj_index].asignedTo =  projectManager.projectList[proj_index].asignedTo.filter { $0 != id_user }
+                    self.projectManager.updateProject(project: projectManager.projectList[proj_index])
+                    self.projectManager.getProjectdata()
+                }, label: {
+                    Image(systemName: "xmark.bin.fill")
+                })
+            }
         }
         .padding(15)
     }

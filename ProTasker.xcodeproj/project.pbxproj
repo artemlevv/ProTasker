@@ -14,9 +14,8 @@
 		AC867B2E2A2B54B800E0666C /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = AC867B2D2A2B54B800E0666C /* FirebaseStorage */; };
 		AC867B342A2C95D400E0666C /* ProjectManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC867B332A2C95D400E0666C /* ProjectManager.swift */; };
 		AC867B382A2CA39000E0666C /* TaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC867B372A2CA39000E0666C /* TaskView.swift */; };
-		AC867B3A2A2CBC0100E0666C /* TaskListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC867B392A2CBC0100E0666C /* TaskListView.swift */; };
 		AC867B3C2A2D176F00E0666C /* ProjectScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC867B3B2A2D176F00E0666C /* ProjectScreen.swift */; };
-		AC867B3E2A2D2AB500E0666C /* Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC867B3D2A2D2AB500E0666C /* Test.swift */; };
+		AC867B3E2A2D2AB500E0666C /* DownloadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC867B3D2A2D2AB500E0666C /* DownloadView.swift */; };
 		AC867B402A2E67D600E0666C /* CardDetailScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC867B3F2A2E67D600E0666C /* CardDetailScreen.swift */; };
 		AC867B422A2E6A6A00E0666C /* PeopleAddingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC867B412A2E6A6A00E0666C /* PeopleAddingView.swift */; };
 		AC8887A52A1CC08C00FFA338 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC8887A42A1CC08C00FFA338 /* AppDelegate.swift */; };
@@ -30,6 +29,8 @@
 		AC8887C02A1D10A800FFA338 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = AC8887BF2A1D10A800FFA338 /* FirebaseAuth */; };
 		AC8887C22A1D135200FFA338 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = AC8887C12A1D135200FFA338 /* GoogleService-Info.plist */; };
 		AC8887C52A1D159F00FFA338 /* HomeScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC8887C42A1D159F00FFA338 /* HomeScreen.swift */; };
+		ACBBFBAB2A31D00400E08FD5 /* MyCardsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACBBFBAA2A31D00400E08FD5 /* MyCardsScreen.swift */; };
+		ACCCA6302A327D4D00C781A0 /* TaskList.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACCCA62F2A327D4D00C781A0 /* TaskList.swift */; };
 		ACF07F4C2A20D9600012F016 /* AddMainScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACF07F4B2A20D9600012F016 /* AddMainScreen.swift */; };
 		ACF07FB02A252ABF0012F016 /* NewProjectScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACF07FAF2A252ABF0012F016 /* NewProjectScreen.swift */; };
 /* End PBXBuildFile section */
@@ -40,9 +41,8 @@
 		AC37ADF82A27F407006FA824 /* FirestoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreManager.swift; sourceTree = "<group>"; };
 		AC867B332A2C95D400E0666C /* ProjectManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectManager.swift; sourceTree = "<group>"; };
 		AC867B372A2CA39000E0666C /* TaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskView.swift; sourceTree = "<group>"; };
-		AC867B392A2CBC0100E0666C /* TaskListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListView.swift; sourceTree = "<group>"; };
 		AC867B3B2A2D176F00E0666C /* ProjectScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectScreen.swift; sourceTree = "<group>"; };
-		AC867B3D2A2D2AB500E0666C /* Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Test.swift; sourceTree = "<group>"; };
+		AC867B3D2A2D2AB500E0666C /* DownloadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadView.swift; sourceTree = "<group>"; };
 		AC867B3F2A2E67D600E0666C /* CardDetailScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardDetailScreen.swift; sourceTree = "<group>"; };
 		AC867B412A2E6A6A00E0666C /* PeopleAddingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeopleAddingView.swift; sourceTree = "<group>"; };
 		AC8887A12A1CC08C00FFA338 /* ProTasker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ProTasker.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -57,6 +57,8 @@
 		AC8887BC2A1CFCB400FFA338 /* LogInVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogInVC.swift; sourceTree = "<group>"; };
 		AC8887C12A1D135200FFA338 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		AC8887C42A1D159F00FFA338 /* HomeScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeScreen.swift; sourceTree = "<group>"; };
+		ACBBFBAA2A31D00400E08FD5 /* MyCardsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyCardsScreen.swift; sourceTree = "<group>"; };
+		ACCCA62F2A327D4D00C781A0 /* TaskList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskList.swift; sourceTree = "<group>"; };
 		ACF07F4B2A20D9600012F016 /* AddMainScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddMainScreen.swift; sourceTree = "<group>"; };
 		ACF07FAF2A252ABF0012F016 /* NewProjectScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewProjectScreen.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -136,11 +138,12 @@
 				ACF07FAF2A252ABF0012F016 /* NewProjectScreen.swift */,
 				AC37ADC92A264577006FA824 /* MyProfileScreen.swift */,
 				AC867B372A2CA39000E0666C /* TaskView.swift */,
-				AC867B392A2CBC0100E0666C /* TaskListView.swift */,
 				AC867B3B2A2D176F00E0666C /* ProjectScreen.swift */,
-				AC867B3D2A2D2AB500E0666C /* Test.swift */,
+				AC867B3D2A2D2AB500E0666C /* DownloadView.swift */,
 				AC867B3F2A2E67D600E0666C /* CardDetailScreen.swift */,
 				AC867B412A2E6A6A00E0666C /* PeopleAddingView.swift */,
+				ACBBFBAA2A31D00400E08FD5 /* MyCardsScreen.swift */,
+				ACCCA62F2A327D4D00C781A0 /* TaskList.swift */,
 			);
 			path = SwiftUI;
 			sourceTree = "<group>";
@@ -225,13 +228,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ACCCA6302A327D4D00C781A0 /* TaskList.swift in Sources */,
+				ACBBFBAB2A31D00400E08FD5 /* MyCardsScreen.swift in Sources */,
 				AC37ADCA2A264577006FA824 /* MyProfileScreen.swift in Sources */,
 				AC867B402A2E67D600E0666C /* CardDetailScreen.swift in Sources */,
 				AC867B382A2CA39000E0666C /* TaskView.swift in Sources */,
-				AC867B3A2A2CBC0100E0666C /* TaskListView.swift in Sources */,
 				AC867B342A2C95D400E0666C /* ProjectManager.swift in Sources */,
 				AC37ADF72A27D8C6006FA824 /* HomeVC.swift in Sources */,
-				AC867B3E2A2D2AB500E0666C /* Test.swift in Sources */,
+				AC867B3E2A2D2AB500E0666C /* DownloadView.swift in Sources */,
 				AC867B3C2A2D176F00E0666C /* ProjectScreen.swift in Sources */,
 				AC867B422A2E6A6A00E0666C /* PeopleAddingView.swift in Sources */,
 				AC8887BD2A1CFCB400FFA338 /* LogInVC.swift in Sources */,
@@ -387,9 +391,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = VNU8KKW4GG;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = VNU8KKW4GG;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ProTasker/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -402,8 +408,10 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.ukma.edu.ua.levchenko.ProTasker;
+				PRODUCT_BUNDLE_IDENTIFIER = ua.edu.ukma.levchenko.ProTasker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Artem Levchenko";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -418,9 +426,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = VNU8KKW4GG;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = VNU8KKW4GG;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ProTasker/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -433,8 +443,10 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.ukma.edu.ua.levchenko.ProTasker;
+				PRODUCT_BUNDLE_IDENTIFIER = ua.edu.ukma.levchenko.ProTasker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Artem Levchenko";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;

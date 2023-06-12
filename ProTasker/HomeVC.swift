@@ -9,12 +9,10 @@ import UIKit
 import SwiftUI
 
 class HomeVC: UIViewController{
-    @StateObject var firestoreManager = FirestoreManager()
-    @ObservedObject var projecManager = ProjectManager()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let vc = UIHostingController(rootView: HomeScreen(projectManager: projecManager).environmentObject(firestoreManager))
+        let vc = UIHostingController(rootView: HomeScreen())//(projectManager: projecManager).environmentObject(firestoreManager))
         vc.modalPresentationStyle = .fullScreen
         navigationItem.backButtonTitle = ""
         DispatchQueue.main.async { [weak self] in

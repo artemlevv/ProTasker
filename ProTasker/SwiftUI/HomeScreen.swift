@@ -16,8 +16,11 @@ struct HomeScreen: View {
     @State private var cancellable: AnyCancellable?
     
     //MARK: - Environmental firebase managers
-    @EnvironmentObject var firestoreManger: FirestoreManager
-    @ObservedObject var projectManager: ProjectManager
+    //@EnvironmentObject var firestoreManger: FirestoreManager
+    //@ObservedObject var projectManager: ProjectManager
+    @StateObject var firestoreManger = FirestoreManager()
+    @ObservedObject var projectManager = ProjectManager()
+    @Environment(\.colorScheme) var colorScheme
     
     
     var body: some View {
@@ -50,9 +53,10 @@ struct HomeScreen: View {
             }
             .toolbar{
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    NavigationLink(destination: AddMainScreen(), label: {
-                        Image(systemName: "equal.square.fill")
-                            .font(.system(size: 35))
+                    NavigationLink(destination: AddMainScreen(projectManager: projectManager).environmentObject(firestoreManger)
+                        , label: {
+                            Image(systemName: "equal.square.fill")
+                                .font(.system(size: 35))
                     })
                 }
                 
@@ -105,7 +109,7 @@ struct HomeScreen: View {
                     Text(projectName)
                         .font(.custom("Apple SD Gothic Neo", size: 23))
                         .bold()
-                        .foregroundColor(.black)
+                        .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                     Spacer()
                 }
                 HStack{
@@ -115,6 +119,7 @@ struct HomeScreen: View {
                     Spacer()
                 }
             }
+            .padding(.leading, 15)
             Spacer()
         }
         .padding(15)
